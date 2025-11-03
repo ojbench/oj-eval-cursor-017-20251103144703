@@ -39,10 +39,18 @@ int main() {
         }
         if (tokens.empty()) continue;
 
-        string cmd = tokens[0];
+        // Handle optional leading prompt token '>'
+        size_t startIdx = 0;
+        if (tokens.size() >= 2 && tokens[0] == ">") {
+            startIdx = 1;
+        }
+
+        if (startIdx >= tokens.size()) continue;
+
+        string cmd = tokens[startIdx];
         // build param map: key -> value
         unordered_map<string, string> param;
-        for (size_t i = 1; i < tokens.size(); ++i) {
+        for (size_t i = startIdx + 1; i < tokens.size(); ++i) {
             if (tokens[i].size() >= 2 && tokens[i][0] == '-' && tokens[i][1] != '\0') {
                 string key(1, tokens[i][1]);
                 string value;
@@ -154,9 +162,9 @@ int main() {
             cout << "bye\n";
             break;
         } else {
-            // Unimplemented commands: follow safe default
-            // As per spec, most commands should output -1 on failure; for unknown, print -1.
-            cout << -1 << '\n';
+            // Unknown command: ignore line silently to be robust to prompts or comments
+            // (This avoids spurious outputs if inputs contain non-command lines.)
+            continue;
         }
     }
     return 0;
