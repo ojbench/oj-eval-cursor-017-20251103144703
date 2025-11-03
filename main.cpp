@@ -127,6 +127,10 @@ int main() {
         if (tokens.size() >= 2 && tokens[0] == ">") {
             startIdx = 1;
         }
+        // Skip leading bracketed index like "[1]"
+        if (startIdx < tokens.size() && tokens[startIdx].size() >= 2 && tokens[startIdx].front() == '[' && tokens[startIdx].back() == ']') {
+            ++startIdx;
+        }
 
         if (startIdx >= tokens.size()) continue;
 
